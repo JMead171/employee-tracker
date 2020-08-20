@@ -4,6 +4,7 @@ const consoleTable = require("console.table");
 
 let connection = mysql.createConnection({
     host     : 'localhost',
+    port     : 3306,
     user     : 'root',
     password : 'root',
     database : 'employee_db'
@@ -25,8 +26,8 @@ function startOptions() {
       "View All Employees",
       "Add Departments",
       "Add Roles",
-      "Add Employee",
-      "Update Employee Role",
+      "Add Employees",
+      "Update Employee Roles",
       "Exit"
     ]
   })
@@ -76,7 +77,8 @@ function viewRoles() {
 };
 
 function viewEmployees() {
-  connection.query('SELECT * FROM employees;', function (err, res) {
+  connection.query('SELECT employees.id, employees.first_name, employees.last_name FROM employees;',  function (err, res) {
+  //, roles.title, departments.dep_name, roles.salary;', function (err, res) {
     if (err) throw err;
     console.table(res);
     startOptions();
@@ -84,37 +86,21 @@ function viewEmployees() {
 };
 
 function addDepartments() {
-  //connection.query('SELECT * FROM employees;', function (err, res) {
-  //  if (err) throw err;
-  //  console.table(res);
   console.log("add department");
   startOptions();
-  //})
 };
 
 function addRoles() {
-  //connection.query('SELECT * FROM employees;', function (err, res) {
-  //  if (err) throw err;
-  //  console.table(res);
   console.log("add roles");
   startOptions();
-  //})
 };
 
 function addEmployees() {
-  //connection.query('SELECT * FROM employees;', function (err, res) {
-  //  if (err) throw err;
-  //  console.table(res);
   console.log("add employee");
   startOptions();
-  //})
 };
 
 function updateRoles() {
-  //connection.query('SELECT * FROM employees;', function (err, res) {
-  //  if (err) throw err;
-  //  console.table(res);
   console.log("update roles");
   startOptions();
-  //})
 };
