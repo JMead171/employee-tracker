@@ -2,8 +2,13 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 
+let departmentList = [];
+let departmentId = {};
+let roleList = [];
+let roleId = {};
 let employeeList = [];
 let employeeListId = {};
+
 let updateId = 0;
 
 let connection = mysql.createConnection({
@@ -16,23 +21,14 @@ let connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  getEmployees();
   startOptions();
 });
  
 
-function getEmployees() {
-  connection.query('SELECT employees.id, employees.first_name, employees.last_name FROM employees;',
-  function (err, res) {
-    if (err) throw err;
-    for (let i = 0; i < res.length; i++) {
-      employeeList.push(res[i].first_name + " " + res[i].last_name);
-    }
-    employeeListId = res;
-  })
-};
-
 function startOptions() {
+  getDepartments();
+  getRoles();
+  getEmployees();
   inquirer.prompt ({
     type: "list",
     name: "option",
@@ -45,6 +41,9 @@ function startOptions() {
       "Add Roles",
       "Add Employees",
       "Update Employee Roles",
+      "Delete Department",
+      "Delete Role",
+      "Delete Employee",
       "Exit"
     ]
   })
@@ -70,6 +69,15 @@ function startOptions() {
         break;      
       case "Update Employee Roles":
         updateRoles();
+        break;
+      case "Delete Department":
+        deleteDepartment();
+        break;    
+      case "Delete Role":
+        deleteRole();
+        break;
+      case "Delete Employee":
+        deleteEmployee();
         break;    
       case "Exit":
         connection.end();
@@ -230,4 +238,125 @@ function updateRoles() {
           startOptions();
         })
     })
+};
+
+function deleteDepartment() {
+  inquirer.prompt ([
+    {
+      type: "list",
+      name: "option",
+      message: "Which department would you like to delete?",
+      choices: departmentList 
+    }])
+    .then(function(res) {
+      let depSelected = res.option;
+      for (let i = 0; i < departmentId.length; i++) {
+        if (departmentId[i].dep_name === depSelected) {
+            updateId = departmentId[i].id;
+        }
+      }
+      connection.query('DELETE FROM departments WHERE ?',
+        [
+        {id: updateId}
+        ],
+        function(err, res) {
+          if (err) throw err;
+          console.log(depSelected, "was deleted from the database");
+          startOptions();
+        })
+    })
+};
+
+function deleteRole() {
+  inquirer.prompt ([
+    {
+      type: "list",
+      name: "option",
+      message: "Which role would you like to delete?",
+      choices: roleList 
+    }])
+    .then(function(res) {
+      let roleSelected = res.option;
+      for (let i = 0; i < roleId.length; i++) {
+        if (roleId[i].title === roleSelected) {
+            updateId = roleId[i].id;
+        }
+      }
+      connection.query('DELETE FROM roles WHERE ?',
+        [
+        {id: updateId}
+        ],
+        function(err, res) {
+          if (err) throw err;
+          console.log(roleSelected, "was deleted from the database");
+          startOptions();
+        })
+    })
+};
+
+function deleteEmployee() {
+  inquirer.prompt ([
+    {
+      type: "list",
+      name: "option",
+      message: "Which employee would you like to delete?",
+      choices: employeeList 
+    }])
+    .then(function(res) {
+      let selectedId = res.option.split(" ");
+      let displayEmp = res.option;
+      for (let i = 0; i < employeeListId.length; i++) {
+        if (employeeListId[i].first_name === selectedId[0] && employeeListId[i].last_name === selectedId[1]) {
+            updateId = employeeListId[i].id
+        }
+      }
+      connection.query('DELETE FROM employees WHERE ?',
+        [
+        {id: updateId}
+        ],
+        function(err, res) {
+          if (err) throw err;
+          console.log(displayEmp, "was deleted from the database");
+          startOptions();
+        })
+    })
+};
+
+function getDepartments() {
+  connection.query('SELECT departments.id, departments.dep_name FROM departments;',
+  function (err, res) {
+    if (err) throw err;
+    departmentList = [];
+    departmentId = {};
+      for (let i = 0; i < res.length; i++) {
+      departmentList.push(res[i].dep_name);
+    }
+    departmentId = res;
+  })
+};
+
+function getRoles() {
+  connection.query('SELECT roles.id, roles.title FROM roles;',
+  function (err, res) {
+    if (err) throw err;
+    roleList = [];
+    roleId = {};
+    for (let i = 0; i < res.length; i++) {
+      roleList.push(res[i].title);
+    }
+    roleId = res;
+  })
+};
+
+function getEmployees() {
+  connection.query('SELECT employees.id, employees.first_name, employees.last_name FROM employees;',
+  function (err, res) {
+    if (err) throw err;
+    employeeList = [];
+    employeeListId = {};
+    for (let i = 0; i < res.length; i++) {
+      employeeList.push(res[i].first_name + " " + res[i].last_name);
+    }
+    employeeListId = res;
+  })
 };
