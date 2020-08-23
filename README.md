@@ -54,15 +54,15 @@
   
 
   ## Technology Used
-  Node.js, Javascript, HTML, CSS, jest, inquirer
+  Node.js, Javascript, HTML, CSS, jest, inquirer, MySQL
 
 
   ## Screen Shot
-  ![image](https://user-images.githubusercontent.com/64744763/89733243-3ae43900-da22-11ea-9fd7-d47d275c03b9.png)
+  ![image](https://user-images.githubusercontent.com/64744763/90980418-355e1700-e529-11ea-9019-dd07486b324e.png)
 
 
   ## Video Walkthrough
-  https://drive.google.com/file/d/1QDgd9DpgryWCjpdQkTJ6e_b5ve8s18yh/view
+  https://drive.google.com/file/d/1wWYbFq9fhCjlgfByu0x6od8QaoZAuwd6/view
 
 
   ## Tests

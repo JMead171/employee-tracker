@@ -41,6 +41,7 @@ function startOptions() {
       "Add Roles",
       "Add Employees",
       "Update Employee Roles",
+      "Update Employee Manager",
       "Delete Department",
       "Delete Role",
       "Delete Employee",
@@ -69,6 +70,9 @@ function startOptions() {
         break;      
       case "Update Employee Roles":
         updateRoles();
+        break;
+      case "Update Employee Manager":
+        updateManager();
         break;
       case "Delete Department":
         deleteDepartment();
@@ -239,6 +243,41 @@ function updateRoles() {
         })
     })
 };
+
+function updateManager() {
+  inquirer.prompt ([
+    {
+      type: "list",
+      name: "option",
+      message: "Which employee would you like to update?",
+      choices: employeeList 
+    },
+    {
+      type: "number",
+      name: "manager",
+      message: "Please enter their new manager id?"
+    }])
+    .then(function(res) {
+      let selectedId = res.option.split(" ");
+      let displayEmp = res.option;
+      for (let i = 0; i < employeeListId.length; i++) {
+        if (employeeListId[i].first_name === selectedId[0] && employeeListId[i].last_name === selectedId[1]) {
+            updateId = employeeListId[i].id
+        }
+      }
+      connection.query('UPDATE employees SET ? WHERE ?',
+        [
+        {manager_id: res.manager},
+        {id: updateId}
+        ],
+        function(err, res) {
+          if (err) throw err;
+          console.log(displayEmp, "was updated in the database");
+          startOptions();
+        })
+    })
+};
+
 
 function deleteDepartment() {
   inquirer.prompt ([
